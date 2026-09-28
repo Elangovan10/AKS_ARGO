@@ -1,0 +1,58 @@
+# Pod spec for the app; Rollout (demokubfordemo) references this via workloadRef.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demokubfordemo
+  namespace: default
+spec:
+  replicas: 6
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: dotappfordemo
+  template:
+    metadata:
+      labels:
+        app: dotappfordemo
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: dotnet-workload
+      containers:
+        - name: app
+          image: aksemo1.azurecr.io/dotnet:v8   # change to v10, v11 for next rollout
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          resources:
+            requests:
+              cpu: "200m"
+            limits:
+              cpu: "500m"
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_URLS
+              valueFrom:
+                configMapKeyRef:
+                  name: dotconfig
+                  key: url
+            - name: KeyVault__VaultUri
+              valueFrom:
+                configMapKeyRef:
+                  name: dotconfig
+                  key: KeyVault__VaultUri
+            - name: KeyVault__SecretName
+              valueFrom:
+                configMapKeyRef:
+                  name: dotconfig
+                  key: KeyVault__SecretName
+            - name: KeyVault__ConnectionStringSecretName
+              valueFrom:
+                configMapKeyRef:
+                  name: dotconfig
+                  key: KeyVault__ConnectionStringSecretName
+            - name: Database__MigrateOnStartup
+              valueFrom:
+                configMapKeyRef:
+                  name: dotconfig
+                  key: Database__MigrateOnStartup

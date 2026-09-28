@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demok8s-platform
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/swaas-systems/kubernetes_training.git
+      targetRevision: argocd
+      path: apps/dotnet
+    - repoURL: https://github.com/swaas-systems/kubernetes_training.git
+      targetRevision: argocd
+      path: apps/postgres
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true

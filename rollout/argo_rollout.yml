@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demokubfordemo-rollout
+  namespace: default
+spec:
+  replicas: 6
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demokubfordemo
+    scaleDown: progressively
+  strategy:
+    canary:
+      stableService: dot-svcdebug
+      canaryService: dot-svcdebug-canary
+      trafficRouting:
+        nginx:
+          stableIngress: dot-ingressdemo
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 30s
+        - setWeight: 100
+        - pause:
+            duration: 50s

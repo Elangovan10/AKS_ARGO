@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dotconfig
+data:
+  url: "http://+:8081"
+  # Replace with your vault + secret name (Portal → Key Vault → Secrets)
+  KeyVault__VaultUri: "https://testkey12e.vault.azure.net/"
+  KeyVault__SecretName: "message"
+  # Secret name in Key Vault whose value is the Npgsql connection string (must exist in vault)
+  KeyVault__ConnectionStringSecretName: "PostgresConnectionString"
+  # EF Core: apply migrations on startup so tables (e.g. Products) exist
+  Database__MigrateOnStartup: "true"

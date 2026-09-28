@@ -1,0 +1,19 @@
+# Only ONE Ingress in this namespace can own the default host + path "/".
+# If you still see a conflict, remove the extra one: kubectl delete ingress dot-ingressfordb -n default
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dot-ingressdemo
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dot-svcdebug
+                port:
+                  number: 8090
